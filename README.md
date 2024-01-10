@@ -1,4 +1,4 @@
-# [ENG] Declarative Dynamic Extensions to HTML (DDE)
+# [EN] Declarative Dynamic Extensions to HTML (DDE)
 
 DDE is a set of extensions (dde-version) for HTML. Each extension (dde-unit) is intended to enhance the behavior of HTML documents declaratively without requiring a line of code (typically JS).
 

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html dde-version="strict 0" lang="fr">
+<head>
+	
+	<meta charset="UTF-8">
+	<link rel="stylesheet" type="text/css" href="style.css" />
+	<title>Abstract dde-version 0.1*</title>
+
+
+</head>
+<body>
+
+<article>
+	<h1>Declarative Dynamic Extensions to HTML : Abstract dde-version 0.1*</h1>
+	
+	<section>
+		<h2>Abstract</h2>
+		
+		<p>
+		DDE est un ensemble d'extensions (dde-version) pour HTML. Chaque extension (dde-unit) est destinée à enrichir le comportement des documents HTML de manière déclarative
+		sans qu'une ligne de code (par exemple JS) ne soit requise.
+		</p>
+		<p>
+		Chaque version de DDE ("dde-version") est un ensemble connu et déterminé d'extensions ("dde-units"). Dans un document comme celui ci, la présence d'un asterique indique que la dde-version est en cours d'élaboration,
+		qu'elle n'est pas entièrement et définitivement établie.</p>
+		<p>
+		Chaque extension dde-unit DOIT être définie par un document (idéalement une specification) décrivant ce que PEUT et DOIT être une implémentation de cette extension (dde-unit),
+		sans que celle ci ne soit destinée à un langage de programmation particulier (tel que JS).
+		</p>
+		<p>Un tel document PEUT comporter des exemples dans un langage donné, mais il DOIT être clair que l'extension décrite n'est pas destinée à un langage de programmation particulier.</p>
+		<p>
+		Chaque dde-unit a le même numéro de version que l'ensemble dde-version auquel elle appartient.
+		Entre deux dde-versions, il est possible qu'une dde-unit soit inchangée. Dans ce cas on parlera d'alias.
+		Par exemple, si la dde-unit "first-extension"
+		fait partie de l'ensemble dde-version 0.1 et de l'ensemble dde-version 0.2 sans avoir été modifiée, on dira que la dde-unit "first-extension" 0.2
+		est un alias de la dde-unit "first-extension" 0.1.
+		</p>
+		<p>dde-version et dde-unit sont des notions abstraites. Elles ne désignent pas des implémentations, elles désignent une définition abstraite, sous forme de document,
+		de ce que peut et doit être une de leur implémentation dans une version donnée.</p>
+		<p>
+		L'implémentation d'une dde-version est un ensemble d'implémentations de dde-units dans un langage donné (ex JS).
+		Elle peut être embarquée (ex par un script JS dans une page) ou native (fournie directement par le navigateur ou une web extension).
+		Le numéro de version de l'implémentation d'une dde-version PEUT avoir sa logique propre, mais DOIT être préfixé par le numéro de la version de l'ensemble dde-version implémentée.
+		Par exemple, une implémentation de dde-version 0.1 peut avoir pour numéro 0.1.1. Une dde-version n'aura, quant à elle, jamais plus de deux chiffres.
+		</p>
+		<p>L'implémentation d'une dde-unit suit la même logique. Elle peut exister en version standalone (telle qu'une bibliothèque JS indépendante) mais NE DOIT PAS entrer en conflit avec
+		une éventuelle implémentation native (voire plus loin)</p>
+		
+		<p>L'implémentation d'une version DDE peut être embarquée (ex par un script JS dans une page) ou native (fournie directement par le navigateur ou une web extension)</p>
+		
+		<p>Une implémentation native d'une dde-version officielle DOIT fournir le support de toutes les versions officielles précédentes, avec d'éventuelles modifications
+		en cas d'hypothétiques failles de sécurités découvertes entre temps sur ces versions.</p>
+		
+		
+		<p class="warning">Ce document est l'ébauche de la dde-version 0.1. Il ne constitue pas une spécification, car celle ci doit avoir un caractère éminement collectif et suivre un certain nombre de règles.
+		Il est suceptible d'être modifié et de servir de base pour produire une spécification plus officielle pour cette même version.
+		Si une telle spécification voit le jour, elle sera mise en liens sur ce document qui sera archivé et considéré comme obsolète.</p>
+		
+	</section>
+	<section>
+		
+		<h2>Déclaration</h2>
+		
+		<p>Un document HTML utilisant une dde-version DOIT déclarer l'attribut "dde-version" sur l'étément HTML racine en suivant les règles ci dessous.</p>
+		
+		<p>
+		On indiquera le "mode" (voire plus loin) suivit d'un espace et du numéro de la dde-version. (syntaxe : dde-version="&lt;mode&gt; &lt;numero-version&gt;")
+		</p>
+		
+		<p>Le numero-version DOIT être composé de 2 chifres séparés par un point et PEUT être suivie de caractères alphanumérique
+		(ces caractères permettront par exemple l'existence de versions alternatives expérimentales non officielles, ou de désigner une branche particulière).
+		Elle NE comporte PAS d'asterique (celui ci sert à indiqué qu'un document abstrait de définition de dee-version ou de dde-unit n'est pas définitif)</p>
+		
+		<p>Le "mode" définit la relation entre le document HTML et Javascript. Il existe 3 modes : strict, respectuous, et broken.</p>
+		
+		<p>Le mode strict indique à l'agent utilisateur que JS n'est ni requis ni utilisé par le document.</p>
+		
+		<p>Le mode respectuous indique que JS propose une expérience améliorée sans être requis (unobstrusive JS).</p>
+		
+		<p>Le mode broken indique que le document nécessite JS pour fonctionner correctement. Il est alors RECOMMANDÉ (non requis)
+		d'utiliser l'attribut script-reason sur l'élément HTML racine pour donner un motif à l'usage du mode broken.</p>
+		
+		<p>Lorsqu’on utilise le mode "broken" ou "respectuous", on est dans le paradigme "application". Et lorsqu’on utilise le mode "strict", on est dans le paradigme "document".
+		Notez que l'en-tête "content-type" ne reflète pas le paradigme utilisé car un document ou une application HTML doit avoir le type text/html (ou application/xhtml+xml)
+		pour être reconnue comme une page Web par le navigateur.[SIC]</p>
+		
+		<p>Abstraitement, les modes ne concernent pas spécifiquement Javascript, mais n'importe quel langage de script, et permettent de dissocier le paradigme utiliser par une page.</p>
+		
+		<p>Notez qu'une implémentation dde-version DOIT fournir un mécanisme de sécurité pour s'assurer qu'aucun script (en dehors de l'implémentation elle-même si elle est embarquée)
+		ne puisse être exécuter sur une page définie en mode stict. Ce mécanisme est le "script-destroyer"</p>
+		
+	</section>
+	
+	<section>
+		<h2>Explications et comportement général</h2>
+		
+		<p>L'objectif des modes DDE n'est pas de décourager l'usage de Javascript mais d'améliorer l'expérience de ceux qui ne l'utilisent pas.</p>
+		
+		<p>Le mode "broken" n'est pas moins respectueux que le mode "respectious". Il indique simplement que l'expérience utilisateur sera incomplète si
+		Javascript est incatif.</p>
+		
+		<p>On considèrera le mode strict comme un indicateur de respect de l'environnement car "no code is natively more green than green code",
+		Mais ceci ne constitue en aucun cas une réprobation de javascript au nom de l'écologie.</p>
+		
+		<p>En mode "broken", lorsque Javascript est désactivé, une implémentation DDE native DOIT fournir une boîte de dialogue permettant à l'utilisateur de définir
+		s'il autorise cette page ou ce domaine à éxecuter javascript : jamais, toujours, cette fois uniquement. Le focus initial DOIT être placé sur ce dernier choix.</p>
+		
+		<p>Les documents n'utilisant pas dde mais nécéssitant JS PEUVENT, et DEVRAIENT utiliser le mode broken avec le numéro de version 0 afin que les utilisateurs ayant
+		désactiver JS puisse bénéficier de cette boîte de dialogue si leur navigateur l'implémente. Exemple :</p>
+		
+		<script type="text/plain" class="html">
+<html dde-version="broken 0" script-reason="motif facultatif">
+		</script>
+		
+		<p>Dans une implémentation native (browser ou webextension), si JS est inactif, la boîte de dialogue affichera :</p>
+		
+		<pre class="modal-example">
+Cette page nécéssite Javascript pour fonctionner. Motif :
+motif facultatif.
+Voulez vous activer Javascript sur le domaine https://example.com ?
+
+	<button type="button" disabled>Jamais</button> <button type="button" disabled>Toujours</button> <button type="button" disabled>Uniquement cette fois</button>
+		</pre>
+		
+		<p>A l'opposé, les documents HTML n'utilisant ni DDE ni Javascript peuvent utiliser le mode strict avec la version 0 et bénéficier de la pastille full green (environement)
+		ainsi que de la garantie qu'aucun script ne sera executé grace au script-destroyer (sécurité).</p>
+		
+	</section>
+	
+	<section>
+		
+		<h2>Pastilles</h2>
+		
+		<p>Une implémentation native PEUT fournir une pastille indiquant le mode utilisé.</p>
+		
+		<ul>
+			<li>"Full green" : pastille verte pour le mode strict (no code is more green than green code).</li>
+			<li>"Neutral" : pastille neutre (typiquement bleue) pour le mode respectuous.</li>
+			<li>"Broken" : pastille orange pour le mode broken.</li>
+		</ul>
+		
+	</section>
+	<section>
+		<h2>Extension candidate</h2>
+		
+		<div>
+		
+			<h3>Définition</h3>
+			
+			<p>Une extension dde-unit candidate est un document décrivant une amélioration de l'interactivité d'un document HTML, de façon déclarative, sans ligne de code, par l'ajout d'éléments ou d'attributs (paradigme document).</p>
+			
+			<p>Une dde-unit PEUT fournir une API JS ou des évèmenements permettant à des auteurs JS de modifier le comportement par défaut de l'extension mais ce NE DOIT PAS être son usage premier.</p>
+			
+			<p>Une dde-unit N'EST PAS un framework JS ni d'aucun langage de programmation particulier, ni un lieu de stockage de librairies (bien qu'une implémentation PUISSE en incorporer pour ses besoins propres).</p>
+			
+			<p>Une dde-unit définit un pattern précis pour répondre à une problématique précise. Elle est indépendante des autres dde-unit, bien que les dde-units puissent intéragir entre elles.</p>
+		
+		</div>
+		
+		<div>
+			
+			<h3>Convention de nommage</h3>
+			
+			<p>
+				Une extension candidate NE DOIT PAS avoir dans son nom, ou fournir des attributs ayant dans leur nom un fournisseur ou un nom de code de projet non signifiant
+				(exemple de mauvais noms : ACME, my Super Project).
+			</p>
+			<p>
+				Afin de garantir une sémantique intuitive, les noms de dde-units et d'attributs doivent décrire un fonctionnement ou ce qu'ils sont de façon généraliste.
+			</p>
+			
+			<p>
+				Les attributs seront généralement préfixé par "d-", qui signifie dynamic. Lorsque c'est justifié, certains attributs ne comporteront pas de hyphen "-" et devront
+				faire l'objet d'une négociation avec WHATWG pour occuper l'espace de nom. Exemple : les attributs src et loading pourrait être utilisé sur d'autres éléments
+				que ceux initialement fixés par WHATWG pour permettre du chargement asynchrone de fragment HTML (comme le fait Turbo Frame). La demande est légitime car
+				elle n'entre pas en conflit avec l'existant, et rend la lecture du DOM plus légère, consistante et intuitive que ne le ferait des attributs "d-src" et "d-loading".
+				Il n'y a pas de restriction à proposer des préfixs différent de "d-", mais cela DOIT être sémantiquement justifié.
+			</p>
+			
+			<p>
+				Exemples de noms de dde-units :
+				<script type="text/plain">
+d-aria (pour dynamic ARIA),
+d-zones-states (un système de navigation reposant sur un cache de zones dans plusieurs états)
+				</script>
+			</p>
+			<div class="notice">
+				<p>
+					Il est tout à fait possible de proposer des ddes-units avec des noms de codes ne respectant pas encore cette convention (ex : un nom de projet temporaire).
+					De plus, ces conventions ne concernent pas le noms des implémentations spécifique de ces dde-units (ex : firefox-dde-native, dde.js, acme-d-aria.rust...).
+				</p>
+				
+				<p>
+					L'implémentation spécifique d'une dde-unit reste libre d'implémenter le support d'éléments ou de balises provenant d'autres projets similaires tels que Turbo Frames,
+					Turbo Streams, HTMX, ou Unpoly, par exemple lorsque JS est désactivé. Mais c'est en dehors de la porté des documents de définitions abstraits tels que celui ci.
+					A fortiori du fait que ces exemples désignent actuellement des noms de bibliothèques Javasript (en tout cas pour le moment) :
+					C'est à dire qu'il n'y a pas de dissociation entre une définition abstraite de ces projets et leur unique implémentation.
+				</p>
+			</div>
+			
+			<p>La raison d'être de dde est de produire cette dissociation de façon abstraite et collective.
+			On tentera de faire la synthèse des bonnes idées existantes, d'identifier des patterns.
+			De trouver des noms génériques intuitifs et consistant avec l'existant d'un coté,
+			de répertorier et promouvoir les implémentations existantes de ces patterns de l'autre.</p>
+			
+		</div>
+	
+	</section>
+	
+	<section>
+		<h2>Objectifs généraux de dde-version 0.1*</h2>
+		<ul>
+			<li>Fournir les bases d'une appropriation collective des notions dde-version et dde-unit</li>
+			<li>Définir ces notions</li>
+			<li>Permettre à une communauté de se constituer et de prendre part à la définition générale de dde (ce document)</li>
+		</ul>
+		
+
+		
+		<h2>Liste et descriptions des extensions dde-units fournies par dde-version 0.1*</h2>
+			<details>
+				<summary>d-aria : implémentation généraliste de ARIA</summary>
+				<p>d-aria est une implémentation généraliste de ARIA. Elle interprête les attributs et rôles de façon performative.
+				En se basant sur les <a href="https://www.w3.org/WAI/ARIA/apg/patterns/">Patterns AGP</a> d-aria fournit effectivement
+				aux éléments leur comportement attendu sans qu'une ligne de code ne soit necéssaire. Un comportement par défaut sera
+				déployé sur ces éléments. Les comportements optionnels et les ambiguités d'interprétations devront être gérés
+				de façon déclarative par l'ajout de nouveaux attributs (le moins possible) et de conventions d'écritures.
+				(exemple, l'attribut d-handler sur un enfant direct d'un élément comportant aria-expanded et aria-selected permettra de dissocier
+				la zone de clique : voire https://www.w3.org/WAI/ARIA/apg/patterns/treeview/examples/treeview-navigation/)</p>
+				<p>
+				TODO : documentation, implémentation(s) existante
+				</p>
+			</details>
+			<details>
+				<summary>d-zones-states : Navigations entre plusieurs documents dans un même contexte basés unr un système de cache "layout / zones states"</summary>
+				<p>
+					d-zones-states permet la navigations entre plusieurs documents dans un même contexte (généralement connu sous le nom de SPA pour Single Page Application).</p>
+					<p>d-zones-states identifie des layouts grace à l'attribut d-layout placé sur le body d'un document (ex : one-column, two-columns...).
+					Des zones sont identifiées par le couple d'attributs id et d-zone.</p>
+					<p>La valeur de l'attribut "d-zone" est la <strong>clef d'état</strong> qui sert à identifier l'état de la zone pour le cache.
+					Une même zone a plusieurs états mis en cache au cours de la navigation.</p>
+					<p>Au cours de la navigation, lorsqu'un document associe un état déjà en cache à une zone, c'est le dernier état en mémoire qui sera utilisé.
+					Un layout déjà chargé (identifié par l'attribut d-layout) sera également réutilisé.</p>
+					<p>Chaque requête fournira le header D-Ignored qui renseignera le serveur
+					sur les d-layout et les d-zones déjà chargés.</p>
+					<p>Exemple :
+
+<script type="text/plain" class="json">
+{
+    "layouts": [
+        "one-column", "two-columns" 
+    ],
+    "zones": {
+        "first": [
+            "one_context",
+            "another_context"
+        ],
+        "second": [
+            "one_context"
+        ]
+    }
+}
+</script>
+					</p>
+					<p>Le serveur reste libre d'alléger ses réponses en fonction de ce qui sera ignoré par le client.</p>
+					<p>Le header CSRF-Token livré dans chaque requête permet de sécurisé la transaction. Une réponse 401 ou une page complète 200 devra être retournée
+					si le jeton ne correspond pas en cas de requête GET ou HEAD. Dans ce cas le serveur DOIT rejeter les requêtes POST PUT DELETE et PATCH.
+					Le jeton est initialisé dans le head du document :
+<script type="text/plain" class="html">
+	<meta name="csrf-token" content="123456-security-token-ABC000">
+</script>
+					</p>
+					<p>
+					Cette dde-unit est inspiré du Z Framework et de Turbo Frame, mais remplace le pattern "fragments" par celui de "zones states".
+					Elle n'est pas une alternative au pattern "fragments" qui pourra être définit dans une autre dde-unit.
+					</p>
+			</details>
+
+		
+		
+		<h2>Contributions</h2>
+		<ul>
+			<li>Suggérer des modification avant la version définitive de ce document, ou pour une version ultérieur</li>
+			<li>Proposer une dde-unit</li>
+			<li>Traduire</li>
+			<li>Supporter ce projet (dons, encouragement)</li>
+		</ul>
+		
+		
+		<h2>Implémentation(s) actuelle(s)</h2>
+		TODO - publier la web-extension et la version embarquée (work in progress)
+		
+		
+		<h2>Contact</h2>
+		<p>flavien.guillon@gmail.com</p>
+		
+		<h2>Projets similaires</h2>
+		<p>Z framework, Turbo Frames, Turbo Streams, intercoolerjs, HTMX, Unpoly, autres ?...)</p>
+		
+		<h2>Licence</h2>
+		<p>
+			Ce document, "abstract dde-version 0.1*", ainsi que les dde-units qui y sont décrites sont sous licence MIT
+			
+			<details><summary>MIT License</summary>
+
+			Copyright (c) 2023 Flavien Guillon
+
+			Permission is hereby granted, free of charge, to any person obtaining a copy
+			of this software and associated documentation files (the "Software"), to deal
+			in the Software without restriction, including without limitation the rights
+			to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+			copies of the Software, and to permit persons to whom the Software is
+			furnished to do so, subject to the following conditions:
+
+			The above copyright notice and this permission notice shall be included in all
+			copies or substantial portions of the Software.
+
+			THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+			IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+			FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+			AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+			LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+			OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+			SOFTWARE.
+			</details>
+			
+		</p>
+		
+	</section>
+	
+</article>
+
+
+</body>
+</html>
